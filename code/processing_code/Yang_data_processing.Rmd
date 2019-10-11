@@ -1,0 +1,67 @@
+---
+title: "data processing"
+output: word_document
+---
+
+packages loading
+```{r}
+library(readxl)
+library(tidyverse)
+```
+load the data.
+```{r}
+life_stage_gene_expression <- readxl::read_excel("../../data/raw_data/12864_2018_4600_MOESM2_ESM.xlsx")
+```
+The "life_stage_gene_expression" file contains mean expression values (reads per million) for all transcripts from four life-cycle stages of Trypanosoma brucei brucei (slender form, stumpy form, ealy and late procyclic forms). cDNA libraries were prepared from poly(A)-selected RNA, and were sequenced using Illumina Hiseq sequencing system. Reads obtained from the RNA-seq were aligned to the T. b. brucei 927 reference genome version 5.
+Data was obtained from ***Naguleswaran, A., Doiron, N., & Roditi, I. (2018). RNA-Seq analysis validates the use of culture-derived Trypanosoma brucei and provides new markers for mammalian and insect life-cycle stages. BMC genomics, 19(1), 227.***
+```{r}
+glimpse(life_stage_gene_expression)
+life_stage_gene_expression
+```
+The file "life_stage_gene_expression" contains 10 variables with 9694 observations. The variables include gene accession number (gene ID), description of each genes and mean transcript values from four life cycle stages.The last four columns are the calculated ratios of transcripts expression values between pairs of the 4 life stages. 
+The table is tidy, and contains all the information I need. 
+
+Read another file into R. 
+```{r}
+Base_J_H3V_gene_expression <- readxl::read_excel("../../data/raw_data/journal.pgen.1005762.s012.XLSX")
+```
+
+```{r}
+glimpse(Base_J_H3V_gene_expression)
+Base_J_H3V_gene_expression
+```
+The file "Base_J_H3V_gene_expression" display the genes whose transcript levels were significant different (as analyzed by a T test using Benjamimi and Hochberg correction, p value < 0.05) between different mutant cells and wild type cells. The mutant cells used in the study include wild type cells, cells with base J knockout (KO), H3V KO, and cells with both base J and H3V KO. Similar to the study presented above, cDNA libraries were prepared form poly(A)-selected RNA and sequenced on an Illumina HiSeq 2000 sequencer. Reads obtained were aligned to the T. brucei 927 version 5 reference genome. 
+Data was obtained from ***Schulz, D., Zaringhalam, M., Papavasiliou, F. N., & Kim, H. S. (2016). Base J and H3. V regulate transcriptional termination in Trypanosoma brucei. PLoS genetics, 12(1), e1005762.***
+Again luckily, This table is tidy, except that there is special symbol in "mutant" column representing KO that cannot be displayed correctly here. 
+
+I want to do some cross comparison between table 1 and table 2. My primary question is whether base J or H3V ablation leads to upregulation of gene characteristic to certain T. brucei life stages. 
+To make it easier for comparison, I will split table 2 to 3 tables, with each of them displaying genes with significantly different expression values than wild type cells in three different mutant cells. 
+
+```{r}
+baseJ_KO_gene_change <- Base_J_H3V_gene_expression %>%
+  filter(mutant == "J∆")
+H3V_KO_gene_change <- Base_J_H3V_gene_expression %>%
+  filter(mutant == "H3.V∆")
+double_KO_gene_change <- Base_J_H3V_gene_expression %>%
+  filter(mutant == "J∆H3.V∆")
+```
+
+```{r}
+head(baseJ_KO_gene_change)
+head(H3V_KO_gene_change)
+head(double_KO_gene_change)
+
+```
+
+Save the data as an RDS
+```{r}
+saveRDS(baseJ_KO_gene_change, file = "../../data/processed_data/baseJ_KO_gene_change.rds")
+saveRDS(H3V_KO_gene_change, file = "../../data/processed_data/H3V_KO_gene_change.rds")
+saveRDS(double_KO_gene_change, file = "../../data/processed_data/double_KO_gene_change.rds")
+saveRDS(life_stage_gene_expression, file = "../../data/processed_data/life_stage_gene_expression.rds")
+
+```
+
+
+
+

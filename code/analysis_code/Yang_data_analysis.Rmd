@@ -1,0 +1,67 @@
+---
+title: "Yang_data_analysis"
+output: word_document
+---
+
+Load required packages
+```{r}
+library(ggplot2)
+library(dplyr)
+library(broom)
+```
+
+load data. 
+```{r}
+baseJ_KO_gene_change <- readRDS("../../data/processed_data/baseJ_KO_gene_change.rds")
+H3V_KO_gene_change <- readRDS("../../data/processed_data/H3V_KO_gene_change.rds")
+double_KO_gene_change <- readRDS("../../data/processed_data/double_KO_gene_change.rds") 
+life_stage_gene_expression <- readRDS("../../data/processed_data/life_stage_gene_expression.rds")
+```
+
+First, I ask if genes whose expressions were affected by base J knockout are related to certain stages of T. brucei life cycle. 
+```{r}
+baseJ_KO_gene_change
+life_stage_gene_expression
+BaseJ_related_genes <- baseJ_KO_gene_change$name
+cluster1 <- life_stage_gene_expression %>%
+  filter(`Gene ID` %in% BaseJ_related_genes)
+cluster1
+```
+To see if any of these genes are up-regulationed by a certain cell cycle stage, I need to compare the ratios of expression values between different life stages, as presented in the last columns in cluster1 table. If the ratio for a specific gene is greater than 2, then I consider that gene to be up-regulated.  
+
+```{r}
+cluster1 %>%
+  filter(`FC St/Sl` > 2) %>%
+  select(`Gene ID`) %>%
+  count()
+cluster1 %>%
+  filter(`FC St/Early` > 2) %>%
+  select(`Gene ID`) %>%
+  count()
+cluster1 %>%
+  filter(`FC St/Late` > 2) %>%
+  select(`Gene ID`) %>%
+  count()
+cluster1 %>%
+   filter(`FC Early/Late` > 2) %>%
+  select(`Gene ID`) %>%
+  count()
+number_genes <- c(10, 10, 12, 5)
+genes_affected_baseJ_KO <- matrix(number_genes, ncol = 1, byrow = TRUE)
+rownames(genes_affected_baseJ_KO) <- c("stumpy", "slender", "early", "late")
+genes_affected_baseJ_KO <- as.table(genes_affected_baseJ_KO)
+genes_affected_baseJ_KO <- as.data.frame(genes_affected_baseJ_KO)
+genes_affected_baseJ_KO %>%
+  ggplot(aes(Var1, Freq)) + geom_point()
+```
+
+From this plot, it seems that base J KO had the least impact on gene expression of late procyclic form of T. brucei. 
+
+
+
+
+
+
+
+
+

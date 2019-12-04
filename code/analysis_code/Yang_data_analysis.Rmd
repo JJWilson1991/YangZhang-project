@@ -8,54 +8,215 @@ Load required packages
 library(ggplot2)
 library(dplyr)
 library(broom)
+library(tidyverse)
 ```
 
 load data. 
 ```{r}
-baseJ_KO_gene_change <- readRDS("../../data/processed_data/baseJ_KO_gene_change.rds")
-H3V_KO_gene_change <- readRDS("../../data/processed_data/H3V_KO_gene_change.rds")
-double_KO_gene_change <- readRDS("../../data/processed_data/double_KO_gene_change.rds") 
 life_stage_gene_expression <- readRDS("../../data/processed_data/life_stage_gene_expression.rds")
+Base_J_H3V_gene_expression <- readRDS("../../data/processed_data/Base_J_H3V_gene_expression.rds")
 ```
-
-First, I ask if genes whose expressions were affected by base J knockout are related to certain stages of T. brucei life cycle. 
 ```{r}
-baseJ_KO_gene_change
 life_stage_gene_expression
-BaseJ_related_genes <- baseJ_KO_gene_change$name
-cluster1 <- life_stage_gene_expression %>%
-  filter(`Gene ID` %in% BaseJ_related_genes)
-cluster1
+glimpse(life_stage_gene_expression)
 ```
-To see if any of these genes are up-regulationed by a certain cell cycle stage, I need to compare the ratios of expression values between different life stages, as presented in the last columns in cluster1 table. If the ratio for a specific gene is greater than 2, then I consider that gene to be up-regulated.  
+
+First, I want to know which genes have up-regulated expression in each of four T. brucei life stages. To answer this question, if a certain gene has the highest transcirpts read in one of the life stage, then I regard the gene to be over-represented in that life stage. For exmaple, for gene Tb927.4.4520, the transcripts reads for slender form, stumpy form, Early and late procyclic form are 3.77, 4.17, 3.99, and 2.06, respectivelt. This gene is upregulated in the stumpy stage according to the definition.
+I need to do some data transformation to find out in which life stage a gene has the highest expression. 
 
 ```{r}
-cluster1 %>%
-  filter(`FC St/Sl` > 2) %>%
-  select(`Gene ID`) %>%
-  count()
-cluster1 %>%
-  filter(`FC St/Early` > 2) %>%
-  select(`Gene ID`) %>%
-  count()
-cluster1 %>%
-  filter(`FC St/Late` > 2) %>%
-  select(`Gene ID`) %>%
-  count()
-cluster1 %>%
-   filter(`FC Early/Late` > 2) %>%
-  select(`Gene ID`) %>%
-  count()
-number_genes <- c(10, 10, 12, 5)
-genes_affected_baseJ_KO <- matrix(number_genes, ncol = 1, byrow = TRUE)
-rownames(genes_affected_baseJ_KO) <- c("stumpy", "slender", "early", "late")
-genes_affected_baseJ_KO <- as.table(genes_affected_baseJ_KO)
-genes_affected_baseJ_KO <- as.data.frame(genes_affected_baseJ_KO)
-genes_affected_baseJ_KO %>%
-  ggplot(aes(Var1, Freq)) + geom_point()
+life_stage_gene_expression <- life_stage_gene_expression %>%
+  gather("life stage", "value", 2, 3, 4, 5, convert = TRUE)
+life_stage_gene_expression
+```
+```{r}
+life_stage_gene_expression <- life_stage_gene_expression %>%
+  group_by(`Gene ID`) %>%
+  top_n(1, value)
+life_stage_gene_expression
+```
+Now, I will split the table into 4 small stables, each including genes up-regulated in a T. brucei life stage. 
+```{r}
+Gene_upregualted_Slender <- life_stage_gene_expression %>%
+  filter(`life stage` == "Mean Slender")
+Gene_upregualted_Stumpy <- life_stage_gene_expression %>%
+  filter(`life stage` == "Mean Stumpy")
+Gene_upregualted_Early <- life_stage_gene_expression %>%
+  filter(`life stage` == "Mean Early")
+Gene_upregualted_Late <- life_stage_gene_expression %>%
+  filter(`life stage` == "Mean Late")
+```
+take a look at them
+```{r}
+Gene_upregualted_Slender
+```
+```{r}
+Gene_upregualted_Stumpy
+```
+```{r}
+Gene_upregualted_Early
+```
+```{r}
+Gene_upregualted_Late
+```
+Save them to the result folder.
+```{r}
+saveRDS(Gene_upregualted_Early, file = "../../results/Gene_upregulated_Early.rds")
+saveRDS(Gene_upregualted_Late, file = "../../results/Gene_upregulated_Late.rds")
+saveRDS(Gene_upregualted_Slender, file = "../../results/Gene_upregulated_Slender.rds")
+saveRDS(Gene_upregualted_Stumpy, file = "../../results/Gene_upregulated_Stumpy.rds")
 ```
 
-From this plot, it seems that base J KO had the least impact on gene expression of late procyclic form of T. brucei. 
+```{r}
+Base_J_H3V_gene_expression
+```
+First, I want to ask the question that if there is any gene that gets upregulated in both J KO and H3V KO.
+```{r}
+Table_J <- Base_J_H3V_gene_expression %>%
+  filter(mutant == "J∆")
+Table_H <- Base_J_H3V_gene_expression %>%
+  filter(mutant == "H3.V∆")
+Table_J %>%
+  filter(name %in% Table_H$name)
+Table_H
+```
+The result indicates that 2 genes were upregulated in both base J and H3V KO. 
+```{r}
+affected_genes <- matrix(c(34, 6, 2), ncol = 3, byrow = TRUE)
+colnames(affected_genes) <- c("base J alone", "H3V alone", "either")
+rownames(affected_genes) <- c("number of genes")
+affected_genes <- as.table(affected_genes)
+affected_genes
+saveRDS(affected_genes, file = "../../results/affected_genes.rds")
+```
+
+The list of genes whose expression got upregulated in base J and H3V double knockout. 
+```{r}
+Table_JH <- Base_J_H3V_gene_expression %>%
+  filter(mutant == "J∆H3.V∆")
+```
+
+Next, I ask the question that whether the genes whose expression get upregulated in Base J and/or H3.V KO are enriched in specific T. brucei life stage. 
+
+```{r}
+Table_J %>%
+  filter(name %in% Gene_upregualted_Early$`Gene ID`) %>%
+  nrow()
+Table_J %>%
+  filter(name %in% Gene_upregualted_Late$`Gene ID`) %>%
+  nrow()
+Table_J %>%
+  filter(name %in% Gene_upregualted_Slender$`Gene ID`) %>%
+  nrow()
+Table_J %>%
+  filter(name %in% Gene_upregualted_Stumpy$`Gene ID`) %>%
+  nrow()
+
+```
+It shows here that Base J KO affected 8, 1, 7, 11 genes whose expressions are the highest in early, late procyclic form, slender form and stumpy form respectively. Make a pie chart to visualize the results. 
+
+```{r}
+base_J <- matrix(c(8, 1, 7, 11), ncol = 4, byrow = TRUE)
+colnames(base_J) <- c("early", "late", "slender", "stumpy")
+rownames(base_J) <- c("number of genes")
+base_J <- as.data.frame(base_J)
+base_J <- base_J %>%
+  gather("life stage", "number of genes", 1, 2, 3, 4)
+base_J
+pie_base_J <- base_J %>%
+  ggplot(aes(x = "base J KO", y = `number of genes`, fill = `life stage`)) + geom_bar(width = 1, stat = "identity") +coord_polar("y", start=0)
+pie_base_J
+ggsave(filename = "../../results/Pie_base_J.png", plot = pie_base_J)
+
+```
+
+Repeat the same analysis for H3V single KO. 
+```{r}
+Table_H %>%
+  filter(name %in% Gene_upregualted_Early$`Gene ID`) %>%
+  nrow()
+Table_H %>%
+  filter(name %in% Gene_upregualted_Late$`Gene ID`) %>%
+  nrow()
+Table_H %>%
+  filter(name %in% Gene_upregualted_Slender$`Gene ID`) %>%
+  nrow()
+Table_H %>%
+  filter(name %in% Gene_upregualted_Stumpy$`Gene ID`) %>%
+  nrow()
+```
+
+```{r}
+H3V <- matrix(c(4, 0, 2, 1), ncol = 4, byrow = TRUE)
+colnames(H3V) <- c("early", "late", "slender", "stumpy")
+rownames(H3V) <- c("number of genes")
+H3V <- as.data.frame(H3V)
+H3V <- H3V %>%
+  gather("life stage", "number of genes", 1, 2, 3, 4)
+H3V
+pie_H3V <- H3V %>%
+  ggplot(aes(x = "H3V KO", y = `number of genes`, fill = `life stage`)) + geom_bar(width = 1, stat = "identity") +coord_polar("y", start=0)
+pie_H3V
+ggsave(filename = "../../results/Pie_H3V.png", plot = pie_H3V)
+
+```
+
+Repeat the analysis for base J and H3V double knockout. 
+```{r}
+Table_JH %>%
+  filter(name %in% Gene_upregualted_Early$`Gene ID`) %>%
+  nrow()
+Table_JH %>%
+  filter(name %in% Gene_upregualted_Late$`Gene ID`) %>%
+  nrow()
+Table_JH %>%
+  filter(name %in% Gene_upregualted_Slender$`Gene ID`) %>%
+  nrow()
+Table_JH %>%
+  filter(name %in% Gene_upregualted_Stumpy$`Gene ID`) %>%
+  nrow()
+```
+```{r}
+JH3V <- matrix(c(43, 16, 54, 47), ncol = 4, byrow = TRUE)
+colnames(JH3V) <- c("early", "late", "slender", "stumpy")
+rownames(JH3V) <- c("number of genes")
+JH3V <- as.data.frame(JH3V)
+JH3V <- JH3V %>%
+  gather("life stage", "number of genes", 1, 2, 3, 4)
+JH3V
+pie_JH3V <- JH3V %>%
+  ggplot(aes(x = "base J/H3V KO", y = `number of genes`, fill = `life stage`)) + geom_bar(width = 1, stat = "identity") +coord_polar("y", start=0)
+pie_JH3V
+ggsave(filename = "../../results/Pie_JH3V.png", plot = pie_JH3V)
+```
+
+```{r}
+result_figure <- cowplot::plot_grid(pie_base_J, pie_H3V, pie_JH3V)
+result_figure
+```
+```{r}
+ggsave(filename = "../../results/result_figure.png", plot = result_figure)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

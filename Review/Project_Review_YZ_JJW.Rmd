@@ -1,0 +1,149 @@
+# Overview
+
+Title of project:
+No title
+
+Author of project:
+Yang Zhang
+
+
+# Specific project content evaluation
+
+## Background, Context and Motivation
+
+### Feedback and Comments
+
+The project has quite a detailed background, but it does not flow very well and seems quite disjointed. The in depth discussion of the lifecycle of the parasites would benefit from some form of diagram to help visualise the process. More effort to link the relevance of this study to potential application would provide stronger motivation for the research.
+There are also no references in the manuscript.
+
+### Summary assessment
+
+* some contextualization and motivation
+
+
+## Question description
+
+### Feedback and Comments
+
+There is a broad overall hypothesis related to the genes in question being related to parasite development. Some more specific hypotheses stemming from this broad concept would be a nice inclusion and allow the reader to track more easily what each part of the analysis is trying to demonstrate. For instance, the broad hypothesis is that the genes are related to development, this could be followed by narrower hypotheses suggested how the writer thinks they may be related and what sort of pattern they expect to see.
+
+### Summary assessment
+
+* question/hypotheses somewhat explained
+
+
+## Data description
+
+### Feedback and Comments
+
+The data is provided in the form of excel spreadsheets. The source of the data is also provided.  There is no code book and it is difficult to know what the numbers are actually referring to other than "level of expression" so some explantation of whta the data is actually referring to would be helpful. It is explained slightly more withion the data cleaning RMD file but some explanation in the manuscript would help too.
+
+### Summary assessment
+
+* source and overall structure of data somewhat explained
+
+
+## Data wrangling and exploratory analysis
+
+### Feedback and Comments
+
+The raw data used in this project was already in tidy form, so only minor wrangling was required, with removing columns and such which seemed appropriate. The exploratory analysis was reproducible if a little sparse. It only looked at numbers of genes upregulated in each life stage according to the type of knock out used and the results are shown as pie charts, which i find a little hard to draw findings from. The use of figures which show more obvious differences in the number of genes over expressed per life stage would possibly be better, even something as simple as a bar chart i would find easier to follow. some more annotation of what is being doen at each stage would be very useful too.
+The raw data contained some interesting information, such as the protein function, in broad categories, and the distance of the gene from certain structures, but this data was excluded from the exploratory analysis. It would have been interesting to do some eploration with categories of protein function and relative positions on the genome.
+There are no supplementary materials and very few figures at all.
+
+### Summary assessment
+* major weaknesses in wrangling and exploratory component
+
+
+## Appropriateness of Analysis
+Were the analysis methods appropriate for the data? Was the analysis done properly? Were different components of the analysis (e.g. performance measure, variable selection, data pre-processing, model evaluation) done in the best way possible and explained well?
+
+### Feedback and Comments
+
+The analysis done so far do not extend much beyond the exploratory stage. The analysis is very descriptive with no statisitcal analysis of the results to compare if there are any significant differences in the life stages that particular knockouts are most likely to affect. Even something as straight forward as a Chi-squared test could be done to evaulate the significance of the results obtained for each ;ife stage.   
+
+### Summary assessment
+* wrong/inadequate analysis
+
+
+## Presentation
+How well are results presented? Are tables and figures easy to read and understand? Are the main figures/tables publication level quality? 
+
+### Feedback and Comments
+
+The figures that are present are OK, but i'm not a huge fan of pie charts for visualising results, i find it diffult to appreciate the differences. The results need to have the labels, axes, legends cleaned up with capital letters, more thorough description of what the figure is showing, etc. 
+
+### Summary assessment
+
+* results are presented ok, with room for improvement
+
+
+## Discussion/Conclusions
+
+### Feedback and Comments
+
+No discussion or conclusions in manuscript
+
+### Summary assessment
+* major parts of discussion missing or wrong 
+
+
+## Further comments
+
+Obviously the project needs work to be finished, what is present has potential though. The introduction is quite good but needs some polishing to flow better and to have references included. The intorduction and hypotheses can be used to lay out the structure of the rest of the manuscript, whohc will make it easier to roganise and consequenlty for the reader to follow. In terms of analysis, some more would be nice and as i said it could be nice to use some of the other information from the raw data.
+
+
+
+# Overall project content evaluation
+
+## Structure
+
+### Feedback and Comments
+
+Files are in appropriate folders, there were no instructions provided to reproduce the project and I was able to figure it out just by following the nbames of folders and files. The raw data could potentially have a more user friendly name. There doesn't appear to be any junk files.
+
+### Summary assessment
+
+* well structured
+
+
+## Documentation 
+
+### Feedback and Comments
+
+There are no read me instructions to explain how to run the project overall. There is some notation in the processing and analysis markdown files, but not enough to know exactly what is being done without having to study the code to figure it out. A codebook to explain the raw data would also be a useful addition.   
+
+### Summary assessment
+* poorly documented
+
+
+## Reproducibility
+
+### Feedback and Comments
+
+There appears to be no instructions for reproducing the project in the read me, however as the repo was fairly straightforward I ran the data processing and analysis in a logical sequence and they seemed to work fine. I had issues with knitting the final manuscript and kept getting the error : " pandoc.exe: Project_YangZhang.docx: openBinaryFile: permission denied (Permission denied)
+Error: pandoc document conversion failed with error 1
+Execution halted"
+
+### Summary assessment
+* small parts not reproducible or required manual intervention 
+
+
+## Thoroughness
+
+### Feedback and Comments
+
+The project is not very thorough overall. Assessing what has been provided (as there is no discussion or conclusion), whilst the introduction provides a reasoanbly detailed background, the hypotheses are vague and some more specific "sub-hypotheses" will make it easier to answer using the results when the discussion and conclusions are written. There is no discussion of alternative ways of analysing the data, as previosuly mentioned, using some of the other information in the raw data may produce some interesting results.
+
+### Summary assessment
+* weak level of thoroughness
+
+
+## Further comments
+
+I think a major improvement to this project in terms of how the manuscript flows would be to improve the actual writing. I have corrected a lot of spelling mistakes and sentence structure errors and included more use of paragraphs to help the introduction flow better and make it easier for the reader to follow. Generally, viewing the manuscript as something that someone would want to read and not have to struggle to read would help with this.
+Also the project is clearly someway off being complete, but these are my comments on what is present. The actual content is good, but working on the structure and flow of the writing will help a lot.
+
+
+
+

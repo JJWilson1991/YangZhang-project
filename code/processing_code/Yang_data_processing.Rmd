@@ -13,7 +13,9 @@ load the data.
 life_stage_gene_expression <- readxl::read_excel("../../data/raw_data/12864_2018_4600_MOESM2_ESM.xlsx")
 ```
 The "life_stage_gene_expression" file contains mean expression values (reads per million) for all transcripts from four life-cycle stages of Trypanosoma brucei brucei (slender form, stumpy form, ealy and late procyclic forms). cDNA libraries were prepared from poly(A)-selected RNA, and were sequenced using Illumina Hiseq sequencing system. Reads obtained from the RNA-seq were aligned to the T. b. brucei 927 reference genome version 5.
+
 Data was obtained from ***Naguleswaran, A., Doiron, N., & Roditi, I. (2018). RNA-Seq analysis validates the use of culture-derived Trypanosoma brucei and provides new markers for mammalian and insect life-cycle stages. BMC genomics, 19(1), 227.***
+
 ```{r}
 glimpse(life_stage_gene_expression)
 life_stage_gene_expression
